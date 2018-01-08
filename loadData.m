@@ -1,14 +1,16 @@
-src=importdata('0_log_num_set_a.txt');
-timestamp=importdata('6192017_1330_a.txt');
+% src_data=importdata('./data/0_src_data.txt');
+% log_num_set=importdata('./data/0_log_num_set.txt');
+% log_parse_result=importdata('./data/0_log_parse_result.txt');
+% snr_data = importdata('./data/0_snr_data.txt');
+src=importdata('./data/0_log_num_set.txt');
+timestamp=importdata('./data/passing.txt');
 disp('load data successfully');
-snr = importdata('0_snr_data.txt');
 
 %smaller
 [m,n] = size(src);
 csi = ones(m,90);
 refreshNum = 30;
-%是否只画图
-% 
+%是否只画�?% 
 % [csi, timestamp] = csi_get_all('Static-1-R1.dat');
 % [m, n] = size(csi);
 
@@ -41,8 +43,7 @@ slide_time = 0.5;
 window_length = floor(sample_rate * window_time);
 slide_length = floor(slide_time * sample_rate);
 %
-window_index = 1:slide_length:size(csi,1)-window_length+1;%把结尾去掉（最后一个数
-ground_truth = zeros(1, length(window_index));
+window_index = 1:slide_length:size(csi,1)-window_length+1;%把结尾去掉（�?���?���?ground_truth = zeros(1, length(window_index));
 
 % Ground truth
 jj = 1;
