@@ -1,0 +1,98 @@
+src=importdata('0_log_num_set_a.txt');
+timestamp=importdata('6192017_1330_a.txt');
+disp('load data successfully');
+snr = importdata('0_snr_data.txt');
+
+%smaller
+[m,n] = size(src);
+csi = ones(m,90);
+refreshNum = 30;
+%是否只画�?% 
+% [csi, timestamp] = csi_get_all('Static-1-R1.dat');
+% [m, n] = size(csi);
+
+ind = [-28:-2:-2
+for i=1:m
+    col = 1;
+    for k = 0:2:4
+        for j = 1:refreshNum
+%             csi(i,col) = src(i,k*refreshNum+j) + 1j * src(i,(k+1)*refreshNum+j);
+            csi(i,col) = src(i,k*refreshNum+j)*src(i,k*refreshNum+j) + src(i,(k+1)*refreshNum+j) * src(i,(k+1)*refreshNum+j);
+            csi(i,col) = sqrt(csi(i,col));
+            col = col+1;
+        end
+    end 
+    for k = 1:3
+        temp_phase = unwrap(angle(csi(i,(k-1)*30+(1:30))));
+        slope = (temp_phase(end) - temp_phase(1)) / 29;
+        intercept = mean(temp_phase);
+        temp_phase = temp_phase - slope * (0:29) - intercept;
+        csi(i,(k-1)*30+(1:30)) = abs(csi(i,(k-1)*30+(1:30))) .* exp(1j * temp_phase);
+    end
+end
+if 1
+csi = abs(csi);
+[wishResult,originSeq,tt,ff]= wish(csi,timestamp);
+if 1 
+sample_rate = 10;
+window_time = 2;
+slide_time = 0.5;
+window_length = floor(sample_rate * window_time);
+slide_length = floor(slide_time * sample_rate);
+%
+window_index = 1:slide_length:size(csi,1)-window_length+1;%把结尾去掉（�?���?���?ground_truth = zeros(1, length(window_index));
+
+% Ground truth
+jj = 1;
+flag = 0;
+for ii = 1:length(window_index)
+    if (window_index(ii) >= timestamp(jj,1) && window_index(ii) < timestamp(jj,2)) || ... %窗口的开始在运动的时间窗之内
+        (window_index(ii) + window_length - 1 >= timestamp(jj,1) && window_index(ii) + window_length - 1 <= timestamp(jj,2))
+        %上面，窗口的结尾在运动时间窗之内
+        ground_truth(ii) = 1;
+        flag = 0;
+    elseif window_index(ii) >= timestamp(jj,2)
+        while(jj <= length(timestamp)&&window_index(ii) >= timestamp(jj,2))
+             jj = jj + 1;
+        end
+        if jj > length(timestamp)
+               break;
+        end
+    end    
+end
+
+% Feature
+nfeature = 5;
+feature = zeros(nfeature,length(window_index));
+for ii = 1:length(window_index)
+    corr_mtx = ones(window_length, window_length);
+    ss = window_index(ii);%窗口起始位置
+    for jj = 0:window_length-1
+        for kk = jj+1:window_length-1
+            temp_corr = corrcoef(csi(ss+jj,:), csi(ss+kk,:));
+            corr_mtx(jj+1,kk+1) = temp_corr(1,2);
+            corr_mtx(kk+1,jj+1) = temp_corr(1,2);
+        end
+    end
+    d = eig(corr_mtx);
+    d = sort(d, 'descend');
+    feature(1:nfeature,ii) = d(1:nfeature);
+end
+feature(1,:) = feature(1,:) / window_length;
+end
+% 
+% svmtrain
+% svmclassify
+end
+plot(abs(feature(1,:)),'r-')% 
+hold on;
+plot(ground_truth);
+hold on;
+plot(tt.*exp(-0.1*ff));
+hold on;
+plot(originSeq,'k-');
+hold on;
+plot(tt,'y--');
+hold on;
+plot(ff,'g--');
+% tt.*exp(-0.1*ff)
