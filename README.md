@@ -1,2 +1,0 @@
-# Wish
-for human detection
