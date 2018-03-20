@@ -3,7 +3,7 @@
 %xx is time correlation result
 %yy is frequency correlation result
 %seq is the result of CSI length
-function [seq,originSeq,originFilter,ground_truth,xx,yy,res] = wish(csi,timestamp,threshold)
+function [seq,originSeq,originFilter,ground_truth,xx,yy,res] = wish(csi,timestamp,threshold,isAuto)
 totalLen = size(csi,1);
 attena_num = 90;
 sample_rate = 20;
@@ -46,6 +46,9 @@ for ii = 1:length(window_index)
     end    
     t = median(corr_mtx);
     f = median(corr_ctx);
+    if isnan(f)
+        f = 0.5;
+    end
     xx(1,seqIndex) = t;
     yy(1,seqIndex) = f;
     seq(1,seqIndex) = t*exp(-0.1*f);
@@ -62,7 +65,7 @@ fprintf('start to deal with data');
 originSeq = seq;
 [ttt,seq,ground_truth] = binaryOperation(seq,timestamp,slide_length,totalLen,threshold);
 originFilter = seq;
-seq = filterOperation(seq,zeroMax,oneMax,threshold);
+seq = filterOperation(seq,zeroMax,oneMax,threshold,isAuto);
 res = mdtp(seq,ground_truth,threshold);
 % plot(originSeq,'b-');
 % hold on;

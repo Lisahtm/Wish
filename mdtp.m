@@ -100,8 +100,8 @@ end
 mbe = mbe/detectedEvent;
 mee = mee/detectedEvent;
 metp = detectedEvent/eventTotal;
-fprintf('\nmdtp:%.2f%%,mdtn:%.2f%%\n',mdtp*100,mdtn*100);
-fprintf('detectedEvent:%d,eventTotal:%d,detectTotal:%d\n',detectedEvent,eventTotal,detectTotal);
+fprintf('\nmdtp:%.2f%%,mdtn:%.2f%%,rate:%.2f%%\n',mdtp*100,mdtn*100,detectedEvent/eventTotal*100);
+fprintf('detectedEvent:%d,eventTotal:%d,detectTotal:%d,rate:%.2f\n',detectedEvent,eventTotal,detectTotal,detectedEvent/eventTotal);
 fprintf('false alarm:%d,metp:%.2f%%,mbe:%.2fs,mee:%.2fs\n',falseAlarm,metp*100,mbe/20,mee/20);
 res=[metp,falseAlarm,mdtp,mdtn,mbe,mee];
 

@@ -8,12 +8,13 @@
 
 
 
-presec = 18*3600+30*60;
+% presec = 18*3600+30*60;
+presec = 22*3600+30*60+12;
 times = 0;
 sample_rate = 20;
 if 1 
-fid = fopen('data/originWithTime.txt');
-fout = fopen('data/origin1.txt','w');
+fid = fopen('data/origin2WithTime.txt');
+fout = fopen('data/origin2_sub.txt','w');
 %store the current average value
 shortseq=cell(100,1);
 shortIndex = 1;
@@ -21,10 +22,12 @@ src = [];
 globalIndex = 1;
 addTotal = 0;
 
+
 while ~feof(fid)
     ttime = fgetl(fid);
     tt = regexp(ttime,':','split');
     tsec = str2num(char(tt(1)))*3600+str2num(char(tt(2)))*60+str2num(char(tt(3)));
+    
     if tsec == presec
         times=times+1;
     else
@@ -50,6 +53,7 @@ while ~feof(fid)
 
     tline3 = fgetl(fid);    
     src = [src;str2num(tline1),str2num(tline2),str2num(tline3)];
+    
     globalIndex = globalIndex+1;
 end
 fprintf('start to deal with new matrix\n');
@@ -89,23 +93,25 @@ end
 %about timestamp
 %S START_TIME
 %E END_TIME
-% fid = fopen('data/recordFilebase2.txt');
+fid = fopen('data/recordFilebase2.txt');
 % fout = fopen('data/timestamp2.txt','w');
-% while ~feof(fid)
-%     tline = fgetl(fid);
-%     tline = tline(3:length(tline));
-%     tt = regexp(tline,':','split');
-%     rs = (str2num(char(tt(1)))*3600+str2num(char(tt(2)))*60+str2num(char(tt(3))))*sample_rate+floor(str2num(char(tt(4)))*sample_rate);
-%     rs = rs-presec*sample_rate;
-%     fprintf(fout,'%d',rs);
-%     
-%     tline = fgetl(fid);
-%     tline = tline(3:length(tline));
-%     tt = regexp(tline,':','split');
-%     rs = (str2num(char(tt(1)))*3600+str2num(char(tt(2)))*60+str2num(char(tt(3))))*sample_rate+floor(str2num(char(tt(4)))*sample_rate);
-%     rs = rs-presec*sample_rate;
-%     
-%     fprintf(fout,' %d\n',rs); 
-% end
-% fclose(fid);
-% fclose(fout);
+while ~feof(fid)
+    tline = fgetl(fid);
+    tline = tline(3:length(tline));
+    tt = regexp(tline,':','split');
+    rs = (str2num(char(tt(1)))*3600+str2num(char(tt(2)))*60+str2num(char(tt(3))))*sample_rate+floor(str2num(char(tt(4)))*sample_rate);
+    rs = rs-presec*sample_rate;
+    fprintf(fout,'%d',rs);
+    
+    
+    
+    tline = fgetl(fid);
+    tline = tline(3:length(tline));
+    tt = regexp(tline,':','split');
+    rs = (str2num(char(tt(1)))*3600+str2num(char(tt(2)))*60+str2num(char(tt(3))))*sample_rate+floor(str2num(char(tt(4)))*sample_rate);
+    rs = rs-presec*sample_rate;
+    
+    fprintf(fout,' %d\n',rs); 
+end
+fclose(fid);
+fclose(fout);

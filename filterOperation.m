@@ -1,10 +1,11 @@
-function seq = filterOperation(seq,zeroMax,oneMax,threshold)
+function seq = filterOperation(seq,zeroMax,oneMax,threshold,isAuto)
 %start filtering
 currentZeroNum = 0;
 currentOneNum = 0;
 m = length(seq);
 originSeq = seq;
 %init
+seq(1,1) = binary(seq(1,1),threshold);
 if seq(1,1)==0 
     currentZeroNum=1;
 else
@@ -31,7 +32,11 @@ for i = 2:m
             if currentZeroNum < zeroMax
                 %%% this area we turn all the 0 -> 1,it means we need to
                 %%% change the threshold;
-                %todo              
+                %todo    
+                if isAuto == 1
+                    a = 0.05*currentZeroNum;
+                    threshold = (1-a)*threshold+a*mean(originSeq(i-currentZeroNum:i-1));
+                end
                 seq(i-currentZeroNum:i-1)=1;      
                 currentOneNum=currentZeroNum+currentOneNum;
             else

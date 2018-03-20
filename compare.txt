@@ -1,0 +1,21 @@
+origin
+mdtp:63.49%,mdtn:97.88%
+detectedEvent:79,eventTotal:80,detectTotal:81
+false alarm:1,metp:98.75%,mbe:0.36s,mee:-0.47s
+
+average
+mdtp:46.34%,mdtn:98.97%
+detectedEvent:75,eventTotal:80,detectTotal:78
+false alarm:2,metp:93.75%,mbe:0.68s,mee:-0.69s
+start to calculate correlation
+
+均值滤波
+mdtp:27.78%,mdtn:99.36%
+detectedEvent:55,eventTotal:80,detectTotal:57
+false alarm:1,metp:68.75%,mbe:0.92s,mee:-0.65s
+start to calculate correlation
+
+另一组数据origin
+mdtp:60.65%,mdtn:98.22%
+detectedEvent:138,eventTotal:170,detectTotal:140
+false alarm:1,metp:81.18%,mbe:0.21s,mee:0.11s

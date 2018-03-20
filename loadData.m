@@ -1,14 +1,15 @@
 % src=importdata('origin.txt');
-src = importdata('data/origin1.txt');
-timestamp=importdata('data/timestamp1.txt');
+src1 = importdata('data/origin1.txt');
+timestamp1=importdata('data/timestamp1.txt');
 
-srcS2 = importdata('data/origin2.txt');
-timestampS2=importdata('data/timestamp2.txt');
+src2 = importdata('data/origin2.txt');
+timestamp2=importdata('data/timestamp2.txt');
 disp('load data successfully');
+flog = fopen('data/thres.txt','a+');
 % snr = importdata('0_snr_data.txt');
 
 %smaller
-[m,n] = size(src);
+[m,n] = size(src1);
 csi = zeros(m,90);
 
 refreshNum = 30;
@@ -36,8 +37,18 @@ ind = [-28:2:-2,-1,1:2:27,28];
 % end
 
 % [seq,originSeq,originFilter,ground_truth,xx,yy,res] = wish(src,timestamp,0.9559);
+
 try
-    [seq0,originSeq0,originFilter0,ground_truth0,xx0,yy0,res0] = wish(src,timestamp,0.8700); 
+    [seq1,originSeq1,originFilter1,ground_truth1,xx1,yy1,res1] = wish(src1,timestamp1,0.8700,0);
+catch ErrorInfo
+    disp(ErrorInfo);  
+    disp(ErrorInfo.identifier);  
+    disp(ErrorInfo.message);  
+    disp(ErrorInfo.stack);  
+    disp(ErrorInfo.cause);  
+end
+try
+    [seq2,originSeq2,originFilter2,ground_truth2,xx2,yy2,res2] = wish(src2,timestamp2,0.8700,0);
 catch ErrorInfo
     disp(ErrorInfo);  
     disp(ErrorInfo.identifier);  
@@ -46,26 +57,9 @@ catch ErrorInfo
     disp(ErrorInfo.cause);  
 end
 if 0
-
-%filter average
 try
-    src1 = medfilt2(src);
-    [seq1,originSeq1,originFilter1,ground_truth1,xx1,yy1,res1] = wish(src1,timestamp,0.8700); 
-catch ErrorInfo
-    disp(ErrorInfo);  
-    disp(ErrorInfo.identifier);  
-    disp(ErrorInfo.message);  
-    disp(ErrorInfo.stack);  
-    disp(ErrorInfo.cause);  
-end
-%filter average
-try
-    windowSize = 10;
-    a=10;
-    y1=filter(ones(1,a/2+1)/windowSize,1,src);
-    y2=filter(ones(1,a/2+1)/windowSize,1,fliplr(src));
-    src2=y1+fliplr(y2)-(1/a)*src;
-    [seq2,originSeq2,originFilter2,ground_truth2,xx2,yy2,res2] = wish(src2,timestamp,0.8700); 
+    fprintf(flog,'auto,data2\n');   
+    wish(src2,timestamp2,0.8700,1);
 catch ErrorInfo
     disp(ErrorInfo);  
     disp(ErrorInfo.identifier);  
@@ -74,8 +68,59 @@ catch ErrorInfo
     disp(ErrorInfo.cause);  
 end
 
+%medfit
+for ii = 1:7
+    try
+        fprintf('[start medfit1]seq %d',ii);  
+        fprintf(flog,'medfit1,data2,windowSize=%ii\n',ii);   
+        srcT = medfilt1(src2,ii);
+        wish(srcT,timestamp2,0.8700,0);
+    catch ErrorInfo
+        disp(ErrorInfo);  
+        disp(ErrorInfo.identifier);  
+        disp(ErrorInfo.message);  
+        disp(ErrorInfo.stack);  
+        disp(ErrorInfo.cause);  
+    end
+end
+
+%data2 average
+for ii = 1:20
+    try
+        fprintf('[start average]seq %d',ii);
+        fprintf(flog,'filter average,data2,windowSize=%d\n',ii);
+        windowSize = ii;
+        a=ii;
+        y1=filter(ones(1,a/2+1)/windowSize,1,src2);
+        y2=filter(ones(1,a/2+1)/windowSize,1,fliplr(src2));
+        srcT=y1+fliplr(y2)-(1/a)*src2;    
+        wish(srcT,timestamp2,0.8700,0);
+        disp('[end]seq %d',ii);
+    catch ErrorInfo
+        disp(ErrorInfo);  
+        disp(ErrorInfo.identifier);  
+        disp(ErrorInfo.message);  
+        disp(ErrorInfo.stack);  
+        disp(ErrorInfo.cause);  
+    end
+end
+
+
+%*************************************************%
+
+
+
+%data2
 try
-    [seq3,originSeq3,originFilter3,ground_truth3,xx3,yy3,res3] = wish(srcS2,timestampS2,0.8700); 
+    disp('[start]seq 3');
+     fprintf(flog,'filter average,data2,windowSize=5\n');
+    windowSize = 6;
+    a=5;
+    y1=filter(ones(1,a/2+1)/windowSize,1,srcS2);
+    y2=filter(ones(1,a/2+1)/windowSize,1,fliplr(srcS2));
+    src2=y1+fliplr(y2)-(1/a)*srcS2;    
+    [seq3,originSeq3,originFilter3,ground_truth3,xx3,yy3,res3] = wish(src2,timestampS2,0.8700,0);
+    disp('[end]seq 3');
 catch ErrorInfo
     disp(ErrorInfo);  
     disp(ErrorInfo.identifier);  
@@ -84,10 +129,40 @@ catch ErrorInfo
     disp(ErrorInfo.cause);  
 end
 
+%auto data2
+try
+    disp('[start]seq 4');
+     fprintf(flog,'origin,data2,auto filter\n');
+    [seq4,originSeq4,originFilter4,ground_truth4,xx4,yy4,res4] = wish(srcS2,timestampS2,0.8700,1); 
+    disp('[end]seq 4');
+catch ErrorInfo
+    disp(ErrorInfo);  
+    disp(ErrorInfo.identifier);  
+    disp(ErrorInfo.message);  
+    disp(ErrorInfo.stack);  
+    disp(ErrorInfo.cause);  
+end
+%auto data1
+try
+    disp('[start]seq 5');
+     fprintf(flog,'origin,data1,auto filter\n');
+    [seq5,originSeq5,originFilter5,ground_truth5,xx5,yy5,res5] = wish(src,timestamp,0.8700,1); 
+    disp('[end]seq 5');
+catch ErrorInfo
+    disp(ErrorInfo);  
+    disp(ErrorInfo.identifier);  
+    disp(ErrorInfo.message);  
+    disp(ErrorInfo.stack);  
+    disp(ErrorInfo.cause);  
+end
+
+fclose(flog);
+
+%calculate threshold tsuyo
 interval = 0.001;
-range = 0.84:interval:0.93;
-thresLine = zeros(1,length(range));
-thresOrigin = zeros(length(range),7);
+range = 0.8:interval:0.95;
+thresLine1 = zeros(1,length(range));
+thresOrigin1 = zeros(length(range),7);
 index = 1;
 %%%%%%%%%
 sample_rate = 20;
@@ -97,23 +172,25 @@ zeroMax = 11;
 oneMax = 11;
 window_length = floor(sample_rate * window_time);
 slide_length = floor(slide_time * sample_rate);
-seq = xx.*exp(-0.1*yy);
-[ttt,seq,ground_truth] = binaryOperation(seq,timestamp,slide_length,size(src,1),ii);
+ yy5(isnan(yy5)) = 0.5;%important
+seq = xx5.*exp(-0.1*yy5);
+[ttt,seq,ground_truth] = binaryOperation(seq,timestamp1,slide_length,size(src2,1),0.87);
 %%%%%%%%%
 for ii = range
-    [seq,originSeq,originFilter,ground_truth,xx,yy,res] = wish(src,timestamp,ii); 
+%     [seq,originSeq,originFilter,ground_truth,xx,yy,res] = wish(src,timestamp,ii); 
     
-%     seq1 = filterOperation(seq,zeroMax,oneMax,ii);
-%     res = mdtp(seq1,ground_truth,ii);
+    seq1 = filterOperation(seq,zeroMax,oneMax,ii,0);
+    res = mdtp(seq1,ground_truth,ii);
     
-    thresOrigin(index,:) = [ii,res];
-    thresLine(1,index) = res(1)*2+res(2)*2+res(3) +res(4)-res(5)*0.5-res(6)*0.5;
+    thresOrigin1(index,:) = [ii,res];
+    thresLine1(1,index) = res(1)*2+res(2)*2+res(3) +res(4)-res(5)*0.5-res(6)*0.5;
     index = index+1;
 end
 
+
 csi = abs(csi);
 % [wishResult,originSeq,tt,ff]= wish(csi,timestamp);
-if 0
+
 
 window_time = 2;
 slide_time = 0.5;
@@ -163,7 +240,7 @@ end
 % 
 % svmtrain
 % svmclassify
-end
+
 plot(abs(feature(1,:)),'r-')% 
 hold on;
 plot(ground_truth);
