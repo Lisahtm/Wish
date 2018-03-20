@@ -39,25 +39,6 @@ ind = [-28:2:-2,-1,1:2:27,28];
 % [seq,originSeq,originFilter,ground_truth,xx,yy,res] = wish(src,timestamp,0.9559);
 
 try
-    [seq1,originSeq1,originFilter1,ground_truth1,xx1,yy1,res1] = wish(src1,timestamp1,0.8700,0);
-catch ErrorInfo
-    disp(ErrorInfo);  
-    disp(ErrorInfo.identifier);  
-    disp(ErrorInfo.message);  
-    disp(ErrorInfo.stack);  
-    disp(ErrorInfo.cause);  
-end
-try
-    [seq2,originSeq2,originFilter2,ground_truth2,xx2,yy2,res2] = wish(src2,timestamp2,0.8700,0);
-catch ErrorInfo
-    disp(ErrorInfo);  
-    disp(ErrorInfo.identifier);  
-    disp(ErrorInfo.message);  
-    disp(ErrorInfo.stack);  
-    disp(ErrorInfo.cause);  
-end
-if 0
-try
     fprintf(flog,'auto,data2\n');   
     wish(src2,timestamp2,0.8700,1);
 catch ErrorInfo
@@ -108,6 +89,7 @@ end
 
 %*************************************************%
 
+if 0
 
 
 %data2
