@@ -38,6 +38,27 @@ ind = [-28:2:-2,-1,1:2:27,28];
 
 % [seq,originSeq,originFilter,ground_truth,xx,yy,res] = wish(src,timestamp,0.9559);
 
+
+%calculate threshold tsuyo
+interval = 0.001;
+range = 0.8:interval:0.95;
+thresLine1 = zeros(1,length(range));
+thresOrigin1 = zeros(length(range),7);
+index = 1;
+%%%%%%%%%
+sample_rate = 20;
+slide_time = 0.1;
+window_time = 1;
+zeroMax = 11;
+oneMax = 11;
+window_length = floor(sample_rate * window_time);
+slide_length = floor(slide_time * sample_rate);
+seq = xx2.*exp(-0.1*yy2);
+[ttt,seq,ground_truth] = binaryOperation(seq,timestamp2,slide_length,size(src2,1),0.87);
+seq1 = filterOperation(seq,zeroMax,oneMax,0.87,0);
+res = mdtp(seq1,ground_truth,ii);
+
+if 0 
 try
     fprintf(flog,'auto,data2\n');   
     wish(src2,timestamp2,0.8700,1);
@@ -89,7 +110,7 @@ end
 
 %*************************************************%
 
-if 0
+% if 0
 
 
 %data2
@@ -154,7 +175,6 @@ zeroMax = 11;
 oneMax = 11;
 window_length = floor(sample_rate * window_time);
 slide_length = floor(slide_time * sample_rate);
- yy5(isnan(yy5)) = 0.5;%important
 seq = xx5.*exp(-0.1*yy5);
 [ttt,seq,ground_truth] = binaryOperation(seq,timestamp1,slide_length,size(src2,1),0.87);
 %%%%%%%%%
@@ -222,16 +242,16 @@ end
 % 
 % svmtrain
 % svmclassify
-
-plot(abs(feature(1,:)),'r-')% 
-hold on;
-plot(ground_truth);
-hold on;
-plot(tt.*exp(-0.1*ff));
-hold on;
-plot(originSeq,'k-');
-hold on;
-plot(tt,'y--');
-hold on;
-plot(ff,'g--');
+% 
+% plot(abs(feature(1,:)),'r-')% 
+% hold on;
+% plot(ground_truth);
+% hold on;
+% plot(tt.*exp(-0.1*ff));
+% hold on;
+% plot(originSeq,'k-');
+% hold on;
+% plot(tt,'y--');
+% hold on;
+% plot(ff,'g--');
 % tt.*exp(-0.1*ff)
