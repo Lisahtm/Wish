@@ -65,7 +65,7 @@ fprintf('start to deal with data');
 originSeq = seq;
 [ttt,seq,ground_truth] = binaryOperation(seq,timestamp,slide_length,totalLen,threshold);
 originFilter = seq;
-seq = filterOperation(seq,zeroMax,oneMax,threshold,isAuto);
+seq = filterOperation(seq,zeroMax,oneMax,threshold,isAuto,0.002);
 res = mdtp(seq,ground_truth,threshold);
 % plot(originSeq,'b-');
 % hold on;

@@ -1,4 +1,5 @@
-function seq = filterOperation(seq,zeroMax,oneMax,threshold,isAuto)
+%beta is the xishu of autoupgrade
+function seq = filterOperation(seq,zeroMax,oneMax,threshold,isAuto,beta)
 %start filtering
 currentZeroNum = 0;
 currentOneNum = 0;
@@ -34,8 +35,12 @@ for i = 2:m
                 %%% change the threshold;
                 %todo    
                 if isAuto == 1
-                    a = 0.05*currentZeroNum;
+                    a = beta*currentZeroNum;
+                    if a>1
+                        a =1;
+                    end
                     threshold = (1-a)*threshold+a*mean(originSeq(i-currentZeroNum:i-1));
+                    disp(threshold);
                 end
                 seq(i-currentZeroNum:i-1)=1;      
                 currentOneNum=currentZeroNum+currentOneNum;

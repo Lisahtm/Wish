@@ -40,10 +40,10 @@ ind = [-28:2:-2,-1,1:2:27,28];
 
 
 %calculate threshold tsuyo
-interval = 0.001;
-range = 0.8:interval:0.95;
+interval = 1;
+range = 0:interval:0;
 thresLine1 = zeros(1,length(range));
-thresOrigin1 = zeros(length(range),7);
+thresOriginAuto1 = zeros(length(range),7);
 index = 1;
 %%%%%%%%%
 sample_rate = 20;
@@ -54,9 +54,13 @@ oneMax = 11;
 window_length = floor(sample_rate * window_time);
 slide_length = floor(slide_time * sample_rate);
 seq = xx2.*exp(-0.1*yy2);
-[ttt,seq,ground_truth] = binaryOperation(seq,timestamp2,slide_length,size(src2,1),0.87);
-seq1 = filterOperation(seq,zeroMax,oneMax,0.87,0);
-res = mdtp(seq1,ground_truth,ii);
+for ii=range
+    [ttt,seq1,ground_truth] = binaryOperation(seq,timestamp2,slide_length,size(src2,1),0.87);
+    seq1 = filterOperation(seq1,zeroMax,oneMax,0.87,1,ii);
+    res = mdtp(seq1,ground_truth,ii);
+    thresOriginAuto1(index,:) = [ii,res];
+    index=index+1;
+end
 
 if 0 
 try
