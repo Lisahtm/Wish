@@ -36,9 +36,9 @@ ind = [-28:2:-2,-1,1:2:27,28];
 %     end
 % end
 
-% [seq,originSeq,originFilter,ground_truth,xx,yy,res] = wish(src,timestamp,0.9559);
+[seq,originSeq,originFilter,ground_truth,mm,yy90,res] = wish(src1,timestamp1,0.8700,0);
 
-
+if 0 
 %calculate threshold tsuyo
 interval = 1;
 range = 0:interval:0;
@@ -62,7 +62,7 @@ for ii=range
     index=index+1;
 end
 
-if 0 
+
 try
     fprintf(flog,'auto,data2\n');   
     wish(src2,timestamp2,0.8700,1);

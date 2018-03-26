@@ -24,20 +24,23 @@ seqIndex = 1;
 disp('start to calculate correlation');
 for ii = 1:length(window_index)
     corr_mtx = zeros(1,window_length*(window_length-1)/2);
-%     corr_ctx = zeros(1,attena_num*(attena_num-1)/2);
-    corr_ctx = zeros(1,attena_num*(attena_num+1)/6);
+%     corr_ctx = zeros(1,attena_num*attena_num/4);
+    corr_ctx = zeros(1,attena_num*(attena_num-1)/2);
+%     corr_ctx = zeros(1,attena_num*(attena_num+1)/6);
     corr_mindex = 1;
     corr_cindex = 1;
     csitmp = csi(ii:(ii+window_length-1),:);
     ss = window_index(ii);
-    for jj = 0:window_length-1
-        for kk = jj+1:window_length-1
-            temp_corr = corrcoef(csi(ss+jj,:), csi(ss+kk,:));
-            corr_mtx(corr_mindex) = abs(temp_corr(1,2));
-            corr_mindex = corr_mindex+1;
+    if 0 
+        for jj = 0:window_length-1
+            for kk = jj+1:window_length-1
+                temp_corr = corrcoef(csi(ss+jj,:), csi(ss+kk,:));
+                corr_mtx(corr_mindex) = abs(temp_corr(1,2));
+                corr_mindex = corr_mindex+1;
+            end
         end
     end
-    for jj = 1:3:attena_num
+    for jj = 1:1:attena_num
         for kk = jj+1:attena_num
             temp_corr = corrcoef(csitmp(:,jj), csitmp(:,kk));
             corr_ctx(corr_cindex) = abs(temp_corr(1,2));
