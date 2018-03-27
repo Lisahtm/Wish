@@ -36,14 +36,13 @@ ind = [-28:2:-2,-1,1:2:27,28];
 %     end
 % end
 
-[seq,originSeq,originFilter,ground_truth,mm,yy90,res] = wish(src1,timestamp1,0.8700,0);
-
-if 0 
+% [seq,originSeq,originFilter,ground_truth,mm,yy90,res] = wish(src1,timestamp1,0.8700,0);
 %calculate threshold tsuyo
 interval = 1;
 range = 0:interval:0;
 thresLine1 = zeros(1,length(range));
-thresOriginAuto1 = zeros(length(range),7);
+% thresOriginAuto1 = zeros(length(range),7);
+thresOriginAuto1 = zeros(4,7);
 index = 1;
 %%%%%%%%%
 sample_rate = 20;
@@ -53,14 +52,19 @@ zeroMax = 11;
 oneMax = 11;
 window_length = floor(sample_rate * window_time);
 slide_length = floor(slide_time * sample_rate);
-seq = xx2.*exp(-0.1*yy2);
-for ii=range
+yyAll = [yy2,zeros(1,44741)];
+
+for ii=1:2
+    seq = xx2.*exp(-0.1*yyAll(ii));
     [ttt,seq1,ground_truth] = binaryOperation(seq,timestamp2,slide_length,size(src2,1),0.87);
-    seq1 = filterOperation(seq1,zeroMax,oneMax,0.87,1,ii);
+    seq1 = filterOperation(seq1,zeroMax,oneMax,0.87,0,0);
     res = mdtp(seq1,ground_truth,ii);
     thresOriginAuto1(index,:) = [ii,res];
     index=index+1;
 end
+
+
+if 0 
 
 
 try

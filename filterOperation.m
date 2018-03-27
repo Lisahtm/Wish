@@ -40,7 +40,7 @@ for i = 2:m
                         a =1;
                     end
                     threshold = (1-a)*threshold+a*mean(originSeq(i-currentZeroNum:i-1));
-                    disp(threshold);
+%                     disp(threshold);
                 end
                 seq(i-currentZeroNum:i-1)=1;      
                 currentOneNum=currentZeroNum+currentOneNum;
